@@ -21,6 +21,9 @@ def checkValid(arr, valid):
             arr.pop(i)
 
 def startOver():
+    for item in win.items[:]:
+        item.undraw()
+    update()
     for i in range(size * size):
         grid[i] = Cell(len(tiles))
 
@@ -28,7 +31,7 @@ def startOver():
 if __name__ == "__main__":
     size = 4
     DIM = size * 128
-    win = GraphWin("Wave Function Collapse", DIM, DIM)
+    win = GraphWin("Wave Function Collapse", DIM, DIM, False)
     win.setBackground("Black")
     tileImages = []
     tiles = []
@@ -36,15 +39,16 @@ if __name__ == "__main__":
     display = []
 
     file = "StarterTiles/"
-    for i in range(6):
+    for i in range(7):
         tileImages.append(Image(Point(64, 64), file + str(i) + ".png")) #DIM/size*i + DIM/(size*2), 64
     
-    tiles.append(Tile(tileImages[0], [0, 0, 0, 0]))
-    tiles.append(Tile(tileImages[1], [1, 0, 0, 0]))
-    tiles.append(Tile(tileImages[2], [1, 1, 0, 0]))
-    tiles.append(Tile(tileImages[3], [1, 0, 1, 0]))
-    tiles.append(Tile(tileImages[4], [1, 1, 1, 0]))
-    tiles.append(Tile(tileImages[5], [1, 1, 1, 1]))
+    tiles.append(Tile(tileImages[0], [None, None, None, None]))
+    tiles.append(Tile(tileImages[1], [0, 0, 0, 0]))
+    tiles.append(Tile(tileImages[2], [1, 0, 0, 0]))
+    tiles.append(Tile(tileImages[3], [1, 1, 0, 0]))
+    tiles.append(Tile(tileImages[4], [1, 0, 1, 0]))
+    tiles.append(Tile(tileImages[5], [1, 1, 1, 0]))
+    tiles.append(Tile(tileImages[6], [1, 1, 1, 1]))
 
 
     #for i in range(6):
@@ -75,6 +79,7 @@ if __name__ == "__main__":
                     imgY = img.getAnchor().getY()
                     img.move(i * 128 + 64 - imgX, j * 128 + 64 - imgY)
                     img.draw(win)
+                    update()
                     display[i + j * size] = True
 
         #creating copy of array
@@ -82,17 +87,20 @@ if __name__ == "__main__":
 
         if len(gridCopy) == 0:
             break
-
         
         gridCopy = sorted(gridCopy, key = lambda x: len(x.options))
 
         smallest = len(gridCopy[0].options)
 
+        gridCopy = list(filter(lambda x: len(x.options) == smallest, gridCopy))
+
+
         #random starting tile
-        cell = R.choice(list(filter(lambda x: len(x.options) == smallest, gridCopy)))
+        cell = R.choice(gridCopy)
         cell.collapsed = True
         if len(cell.options) == 0:
-            startOver()
+            #startOver()
+            cell.options = [0]
             continue
         pick = R.choice(cell.options)
 
