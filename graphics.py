@@ -549,6 +549,7 @@ class GraphicsObject:
          
 class Point(GraphicsObject):
     def __init__(self, x, y):
+
         GraphicsObject.__init__(self, ["outline", "fill"])
         self.setFill = self.setOutline
         self.x = float(x)
